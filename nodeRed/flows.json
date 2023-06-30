@@ -1,0 +1,1307 @@
+[
+    {
+        "id": "61b66726d941df67",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "82a84f4e90139c8d",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "processData",
+        "func": "var msg = msg.payload.toString().split(\"/\");\nvar temp = parseFloat(msg[1]);\nvar co2 = parseFloat(msg[0]);\nvar hum = parseFloat(msg[2]);\nvar currentTime = new Date();\n\n// Set the time zone to Spanish time (Europe/Madrid)\nvar options = { timeZone: \"Europe/Madrid\", year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };\nvar time = currentTime.toLocaleString('es-ES', options).replace(/\\//g, '-').replace(',', '');\n\nvar tempObject = {\n    label: \"Temperature\",\n    value: temp\n};\n\nvar co2Object = {\n    label: \"CO2\",\n    value: co2\n};\n\nvar humObject = {\n    label: \"Humidity\",\n    value: hum\n};\n\nvar timeObject = {\n    label: \"Time\",\n    value: time\n};\n\nmsg.payload = [co2Object, tempObject, humObject, timeObject];\nreturn { payload: msg.payload };\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 624.0000343322754,
+        "y": 161.9999885559082,
+        "wires": [
+            [
+                "86979b8403acbf68",
+                "38bc26ec02e6866b",
+                "1007e030328ce308",
+                "e90e4c22f6344d72",
+                "784f66da1ae51b20",
+                "32b22fdc16174067",
+                "4c394e62a0d1397d"
+            ]
+        ]
+    },
+    {
+        "id": "86979b8403acbf68",
+        "type": "ui_gauge",
+        "z": "61b66726d941df67",
+        "name": "",
+        "group": "8dbba2a3e1402b38",
+        "order": 9,
+        "width": 6,
+        "height": 5,
+        "gtype": "gage",
+        "title": "CO2",
+        "label": "ppm",
+        "format": "{{payload[0].value}}",
+        "min": "400",
+        "max": " 2000",
+        "colors": [
+            "#43cb3a",
+            "#e6bf00",
+            "#ca3838"
+        ],
+        "seg1": "800",
+        "seg2": "1250",
+        "diff": false,
+        "className": "",
+        "x": 844.0000343322754,
+        "y": 61.9999885559082,
+        "wires": []
+    },
+    {
+        "id": "38bc26ec02e6866b",
+        "type": "ui_gauge",
+        "z": "61b66726d941df67",
+        "name": "",
+        "group": "8dbba2a3e1402b38",
+        "order": 15,
+        "width": 6,
+        "height": 5,
+        "gtype": "gage",
+        "title": "Humidity",
+        "label": "%",
+        "format": "{{payload[2].value}}",
+        "min": "10",
+        "max": "100",
+        "colors": [
+            "#b30000",
+            "#00e60f",
+            "#cb3a3a"
+        ],
+        "seg1": "30",
+        "seg2": "50",
+        "diff": false,
+        "className": "",
+        "x": 874.0000343322754,
+        "y": 241.9999885559082,
+        "wires": []
+    },
+    {
+        "id": "b08cd46dabb4c9e1",
+        "type": "ui_template",
+        "z": "61b66726d941df67",
+        "group": "d6c6f52d086a9497",
+        "name": "Temperature Image",
+        "order": 4,
+        "width": 6,
+        "height": 8,
+        "format": "<img ng-src=\"{{msg.image}}\" alt=\"Temperature Image\" width=\"300\" height=\"300\">",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1084.0000343322754,
+        "y": 101.9999885559082,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1007e030328ce308",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "Set Image",
+        "func": "var temp = msg.payload[1].value;\ntemp = Math.ceil(temp);\n\nif (temp < 10) {\n    msg.image = 'https://th.bing.com/th/id/OIP.By0lfwVzrL_P5TTn8Ns12gHaHa?pid=ImgDet&w=203&h=203&c=7&dpr=1,5';\n}\nelse if (temp >= 10 && temp <= 22) {\n    msg.image = 'https://th.bing.com/th/id/OIP.Qj1gGSqzVbDJHCHtyanMwQHaHa?pid=ImgDet&w=203&h=203&c=7&dpr=1,5';\n}\nelse {\n    msg.image = 'https://th.bing.com/th/id/OIP.ZiPRcf8gpnHjOVCBkQyF_QHaHa?pid=ImgDet&w=203&h=203&c=7&dpr=1,5';\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 864.0000343322754,
+        "y": 101.9999885559082,
+        "wires": [
+            [
+                "b08cd46dabb4c9e1"
+            ]
+        ]
+    },
+    {
+        "id": "178a4f69b9b3909f",
+        "type": "ui_widget_thermometer",
+        "z": "61b66726d941df67",
+        "group": "d6c6f52d086a9497",
+        "order": 1,
+        "width": 5,
+        "height": "9",
+        "name": "",
+        "title": "Classroom A",
+        "numColor": 3,
+        "colorTop": "#f41f1f",
+        "colorMiddle": "#8bc34a",
+        "colorBottom": "#34c4f4",
+        "unit": "°C",
+        "scale": "normal",
+        "minTemp": 0,
+        "maxTemp": "35",
+        "x": 1064.0000343322754,
+        "y": 201.9999885559082,
+        "wires": []
+    },
+    {
+        "id": "e90e4c22f6344d72",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "getTemperature",
+        "func": "var temp = msg.payload[1].value;\ntemp = parseFloat(temp);\ntemp = Math.round(temp);\nreturn { payload: temp };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 894.0000343322754,
+        "y": 201.9999885559082,
+        "wires": [
+            [
+                "178a4f69b9b3909f"
+            ]
+        ]
+    },
+    {
+        "id": "784f66da1ae51b20",
+        "type": "ui_text",
+        "z": "61b66726d941df67",
+        "group": "d6c6f52d086a9497",
+        "order": 2,
+        "width": 6,
+        "height": 1,
+        "name": "",
+        "label": "Temperature",
+        "format": "{{payload[1].value}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": true,
+        "font": "Century Gothic,CenturyGothic,AppleGothic,sans-serif",
+        "fontSize": "26",
+        "color": "#000000",
+        "x": 1064.0000343322754,
+        "y": 161.9999885559082,
+        "wires": []
+    },
+    {
+        "id": "62bdb2be53edb17e",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "processSubject",
+        "func": "\n//var msg = msg.payload.toString().split(\"/\");\n//var co2 = parseFloat(msg[0]);\n//var temp = parseFloat(msg[1]);\n//var hum = parseFloat(msg[2]);\n//var time = msg[3]\n//return { co2: co2, temp: temp, hum: hum, time: time };\nvar msg = msg.payload.toString().split(\"/\");\nvar subject = String(msg[0]);\nvar currentTime = new Date();\n\n// Set the time zone to Spanish time (Europe/Madrid)\nvar options = { timeZone: \"Europe/Madrid\", year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };\nvar time = currentTime.toLocaleString('es-ES', options).replace(/\\//g, '-').replace(',', '');\n\nvar subjectObject = {\n    label: \"subject\",\n    value: subject\n};\n\nvar timeObject = {\n    label: \"Time\",\n    value: time\n};\n\nmsg.payload = [subjectObject, timeObject];\nreturn  {payload: msg.payload};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740.9999771118164,
+        "y": 488.99999809265137,
+        "wires": [
+            [
+                "4a8208c5e37e1c73",
+                "abe8015921f80419"
+            ]
+        ]
+    },
+    {
+        "id": "4a8208c5e37e1c73",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "Set Image",
+        "func": "var course = msg.payload[0].value;\n\nif (course == \"Spanish\" || course == \"Español\") {\n    msg.image = 'https://th.bing.com/th/id/OIP.NvDm5ITY2ERUJVYdXdbMbAAAAA?pid=ImgDet&w=84&h=84&c=7&dpr=1,5';\n}\nelse if (course == \"Math\" || course == \"Mates\") {\n    msg.image = 'https://th.bing.com/th/id/OIP.6xuHtqSJ-7q3UoFrvlIznQHaHa?pid=ImgDet&w=181&h=181&c=7&dpr=1,5';\n}\nelse if (course == \"English\" || course == \"Inglés\") {\n    msg.image = 'https://th.bing.com/th/id/OIP.QE9S0OP66N8o-jE3fw0TzwAAAA?pid=ImgDet&w=173&h=173&c=7&dpr=1,5';\n}\nelse if (course == \"Science\" || course == \"Ciencia\") {\n    msg.image = 'https://th.bing.com/th/id/OIP.6ju05ktSbqRfIKtPK4kMFAHaHa?pid=ImgDet&w=208&h=208&c=7&dpr=1,5';\n}\nelse if (course == \"Paint\" || course == \"Pintura\") {\n    msg.image = 'https://th.bing.com/th/id/OIP.btXH2uJnA-RLIARPsYbljwHaHa?pid=ImgDet&w=181&h=181&c=7&dpr=1,5';\n}\nelse if (course == \"Break\" || course == \"Recreo\") {\n    msg.image = 'https://th.bing.com/th/id/OIP.j_AoJyKQZvNI_oMEdD6MygAAAA?pid=ImgDet&w=181&h=181&c=7&dpr=1,5';\n}\nelse {\n    msg.image = 'https://th.bing.com/th/id/OIP._m9wrvHIZ-i4escF6wGNjQHaHa?pid=ImgDet&w=173&h=173&c=7&dpr=1,5';\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 950.9999771118164,
+        "y": 488.99999809265137,
+        "wires": [
+            [
+                "1a8b9cee91b6dbb4"
+            ]
+        ]
+    },
+    {
+        "id": "1a8b9cee91b6dbb4",
+        "type": "ui_template",
+        "z": "61b66726d941df67",
+        "group": "b9e2898dda8fba4a",
+        "name": "Subject Image",
+        "order": 3,
+        "width": 5,
+        "height": 5,
+        "format": "<img ng-src=\"{{msg.image}}\" alt=\"Subject Image\" width=\"300\" height=\"300\">",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1140.9999771118164,
+        "y": 488.99999809265137,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "abe8015921f80419",
+        "type": "ui_template",
+        "z": "61b66726d941df67",
+        "group": "b9e2898dda8fba4a",
+        "name": "Subject",
+        "order": 1,
+        "width": 8,
+        "height": 2,
+        "format": "<div style=\"font-family: Century Gothic; font-size: 25px;\">\n    <p>Subject: <strong><span ng-bind=\"msg.payload[0].value\"></span></p>\n    \n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 940.9999771118164,
+        "y": 528.9999980926514,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "565cbb697ed80c60",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "processTopic",
+        "func": "// Function node code\nif (msg.topic === 'estudio3/classroomA/data/SCD30') {\n    // Process for topic1\n    \n    return [msg, null, null]; // First output contains the modified message, second output is null\n} else if (msg.topic === 'estudio3/classroomA/updates/timetable') {\n    // Process for topic2\n    \n    return [null, msg, null]; // First output is null, second output contains the modified message\n} else if (msg.topic === 'estudio3/classroomA/updates/notification') {\n    // Process for topic2\n\n    return [null, null, msg]; // First output is null, second output contains the modified message\n} ",
+        "outputs": 3,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 200,
+        "wires": [
+            [
+                "82a84f4e90139c8d"
+            ],
+            [
+                "62bdb2be53edb17e"
+            ],
+            [
+                "401cbbaf85db7eea"
+            ]
+        ]
+    },
+    {
+        "id": "faec9cf8b4edd4c2",
+        "type": "mqtt in",
+        "z": "61b66726d941df67",
+        "name": "",
+        "topic": "estudio3/classroomA/#",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "573d8f5e68d30f26",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 200,
+        "wires": [
+            [
+                "565cbb697ed80c60"
+            ]
+        ]
+    },
+    {
+        "id": "401cbbaf85db7eea",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "processNotification",
+        "func": "\nif (msg.payload.split('/').length === 2) {\n    \n    return [msg, null];\n} else if (msg.payload.split('/').length === 3) {\n    \n    return [null, msg];\n} else {\n    \n    return [null, msg];\n}",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730.9999771118164,
+        "y": 588.9999980926514,
+        "wires": [
+            [
+                "5d38f1c09e4d9997"
+            ],
+            [
+                "9c88aedda2bcbc69"
+            ]
+        ]
+    },
+    {
+        "id": "3770e425d1cde1cf",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "Set Image",
+        "func": "var course = msg.payload[0].value;\n\nif (course == \"Drink Water\" || course == \"Beber Agua\") {\n    msg.image = 'https://th.bing.com/th/id/R.c7b141d0afdd337eb54c4db1ea9f7e46?rik=rb3eBLot9rh6MA&pid=ImgRaw&r=0';\n}\nelse if (course == \"Eat Snack\" || course == \"Almuerzo\") {\n    msg.image = 'https://media.istockphoto.com/vectors/cute-smiling-african-boy-eating-an-apple-school-snack-healthy-food-vector-id1264037217?k=6&m=1264037217&s=612x612&w=0&h=hU_VwMGBFeE9KxnhP_Y98wZoWmRLrRe_CaiIS-uklh4=';\n}\nelse if (course == \"Take a Nap\" || course == \"Dormir\") {\n    msg.image = 'https://media.istockphoto.com/vectors/wordcard-for-have-a-nap-vector-id940182248?k=6&m=940182248&s=612x612&w=0&h=bfkLXbtHQnSpRVyHu8M5hTKGaVtHoxAX6zIcVX_DwXY=';\n}\nelse if (course == \"Leave the classroom\" || course == \"Salir del aula\") {\n    msg.image = 'https://th.bing.com/th/id/R.c83db9af9cac7d3e671667f81745ec5a?rik=7Fk2eSnxtNfvfw&riu=http%3a%2f%2fmedia.istockphoto.com%2fvectors%2fback-from-school-vector-id167162526%3fk%3d6%26m%3d167162526%26s%3d612x612%26w%3d0%26h%3dmbrMWMA4yUd6om9Z04fQB-s77LDQInpGhv3Jrke6TrI%3d&ehk=PRBN%2bLol3bu%2bWNaMDOu9bRkuOFjrjUzwkiT0YDgkrpQ%3d&risl=&pid=ImgRaw&r=0';\n}\nelse if (course == \"Go on a trip\" || course == \"Ir de excursión\") {\n    msg.image = 'https://media.istockphoto.com/vectors/school-bus-vector-id472292369?k=6&m=472292369&s=612x612&w=0&h=umk3JZ3J0-cOIf30R0cAFqhpKfA9mi8PPH3mUVckAVU=';\n}\nelse {\n    msg.image = 'https://th.bing.com/th/id/OIP._m9wrvHIZ-i4escF6wGNjQHaHa?pid=ImgDet&w=173&h=173&c=7&dpr=1,5';;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1170.9999771118164,
+        "y": 568.9999980926514,
+        "wires": [
+            [
+                "b6a5f6212e66b8e3"
+            ]
+        ]
+    },
+    {
+        "id": "b6a5f6212e66b8e3",
+        "type": "ui_template",
+        "z": "61b66726d941df67",
+        "group": "60a8a224fcc69219",
+        "name": "Notification Image",
+        "order": 2,
+        "width": 6,
+        "height": 6,
+        "format": "<img ng-src=\"{{msg.image}}\" alt=\"Activity Image\" width=\"600\" height=\"600\">",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1390.9999771118164,
+        "y": 568.9999980926514,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5d38f1c09e4d9997",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "standardNotification",
+        "func": "var msg = msg.payload.toString().split(\"/\");\nvar activity = String(msg[0]);\nvar time = String(msg[1]);\nvar activityObject = {\n    label: \"activity\",\n    value: activity\n};\n\nvar timeObject = {\n    label: \"Time\",\n    value: time\n};\nflow.set('targetTime', time);\nmsg.payload = [activityObject, timeObject];\nreturn { payload: msg.payload };\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 960.9999771118164,
+        "y": 568.9999980926514,
+        "wires": [
+            [
+                "3770e425d1cde1cf",
+                "1f9d7e96726d582c"
+            ]
+        ]
+    },
+    {
+        "id": "9c88aedda2bcbc69",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "otherNotification",
+        "func": "var msg = msg.payload.toString().split(\"/\");\nvar activity = String(msg[0]);\nvar time = String(msg[1]);\nvar text = String(msg[2]);\n\nvar activityObject = {\n    label: \"activity\",\n    value: activity\n};\n\nvar timeObject = {\n    label: \"Time\",\n    value: time\n};\n\nvar extraObject = {\n    label: \"Text\",\n    value: text\n};\nflow.set('targetTime2', time);\nmsg.payload = [extraObject, timeObject, activityObject];\nreturn { payload: msg.payload };\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940.9999771118164,
+        "y": 648.9999980926514,
+        "wires": [
+            [
+                "1f9d7e96726d582c"
+            ]
+        ]
+    },
+    {
+        "id": "1f9d7e96726d582c",
+        "type": "ui_template",
+        "z": "61b66726d941df67",
+        "group": "60a8a224fcc69219",
+        "name": "Notification",
+        "order": 1,
+        "width": 7,
+        "height": 4,
+        "format": "<div style=\"font-family: Century Gothic; font-size: 26px;text-align: center;\">\n    <p>Notification:</span></p>\n    <p><strong><span ng-bind=\"msg.payload[0].value\"></span></p>\n    <p>At: <strong><span ng-bind=\"msg.payload[1].value\"></span></p>\n   \n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1170.9999771118164,
+        "y": 628.9999980926514,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "32b22fdc16174067",
+        "type": "ui_gauge",
+        "z": "61b66726d941df67",
+        "name": "",
+        "group": "8dbba2a3e1402b38",
+        "order": 3,
+        "width": 6,
+        "height": 5,
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "ºC",
+        "format": "{{payload[1].value}}",
+        "min": "0",
+        "max": " 40",
+        "colors": [
+            "#14d8ff",
+            "#00e604",
+            "#ca3838"
+        ],
+        "seg1": "15",
+        "seg2": "27",
+        "diff": false,
+        "className": "",
+        "x": 884.0000343322754,
+        "y": 141.9999885559082,
+        "wires": []
+    },
+    {
+        "id": "4c394e62a0d1397d",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "newInputHistory",
+        "func": "var input = msg.payload;\nvar transformedData = {\n    \"Temperature\": \"\",\n    \"Humidity\": \"\",\n    \"CO2\": \"\",\n    \"Date\": \"\"\n};\n\nfor (var i = 0; i < input.length; i++) {\n    var item = input[i];\n    if (item.label === \"Temperature\") {\n        transformedData[\"Temperature\"] = item.value.toString();\n    } else if (item.label === \"Humidity\") {\n        transformedData[\"Humidity\"] = item.value.toString();\n    } else if (item.label === \"CO2\") {\n        transformedData[\"CO2\"] = item.value.toString();\n    } else if (item.label === \"Time\") {\n        transformedData[\"Date\"] = item.value;\n    }\n}\n\nmsg.payload = transformedData;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 894.0000343322754,
+        "y": 281.9999885559082,
+        "wires": [
+            [
+                "9f2fdc62d7bbec06"
+            ]
+        ]
+    },
+    {
+        "id": "c82cb30b31085b1f",
+        "type": "ui_template",
+        "z": "61b66726d941df67",
+        "group": "8dbba2a3e1402b38",
+        "name": "ShowDataHistory",
+        "order": 1,
+        "width": 10,
+        "height": 14,
+        "format": "<table style=\"margin: 0 auto; border-collapse: collapse;\">\n    <colgroup>\n        <col style=\"width: auto;\">\n        <col style=\"width: auto;\">\n        <col style=\"width: auto;\">\n        <col style=\"width: auto;\">\n    </colgroup>\n    <thead>\n        <tr>\n            <th style=\"padding: 8px; border: 1px solid black; text-align: center;\">Date</th>\n            <th style=\"padding: 8px; border: 1px solid black; text-align: center;\">Temperature</th>\n            <th style=\"padding: 8px; border: 1px solid black; text-align: center;\">Humidity</th>\n            <th style=\"padding: 8px; border: 1px solid black; text-align: center;\">CO2</th>\n\n        </tr>\n    </thead>\n    <tbody>\n        <tr ng-repeat=\"data in msg.payload\">\n            <td style=\"padding: 8px; border: 1px solid black; text-align: center\">{{data.Date}}</td>\n            <td style=\"padding: 8px; border: 1px solid black; text-align: center\">{{data.Temperature}}</td>\n            <td style=\"padding: 8px; border: 1px solid black; text-align: center\">{{data.Humidity}}</td>\n            <td style=\"padding: 8px; border: 1px solid black; text-align: center\">{{data.CO2}}</td>\n\n\n        </tr>\n    </tbody>\n</table>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1244.0000343322754,
+        "y": 281.9999885559082,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9f2fdc62d7bbec06",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "getHistory",
+        "func": "// Store the previous data in flow context\nif (!flow.get(\"prevData\")) {\n    flow.set(\"prevData\", []);\n}\n\n// Get the previous data from flow context\nvar prevData = flow.get(\"prevData\");\n\n// Append the new input to the previous data\nprevData.push(msg.payload);\n\n// Set the updated data in msg.payload\n//msg.payload = prevData;\nmsg.payload = prevData.map(function (data) {\n    return {\n        \"Date\": data.Date,\n        \"Temperature\": data.Temperature,\n        \"Humidity\": data.Humidity,\n        \"CO2\": data.CO2\n    };\n});\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1054.0000343322754,
+        "y": 281.9999885559082,
+        "wires": [
+            [
+                "c82cb30b31085b1f"
+            ]
+        ]
+    },
+    {
+        "id": "081511b683aa1159",
+        "type": "ui_button",
+        "z": "61b66726d941df67",
+        "name": "",
+        "group": "8dbba2a3e1402b38",
+        "order": 20,
+        "width": 10,
+        "height": 1,
+        "passthru": false,
+        "label": "Delete Data History",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 210.9999771118164,
+        "y": 588.9999980926514,
+        "wires": [
+            [
+                "b89f419ef69c49c4"
+            ]
+        ]
+    },
+    {
+        "id": "b89f419ef69c49c4",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "deleteDataHistory",
+        "func": "flow.set(\"prevData\", null);\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450.9999771118164,
+        "y": 588.9999980926514,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "34d6d2d6eb1f64cc",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "newInputHistoryAlarms",
+        "func": "var input = msg.payload;\nvar transformedData = {\n    \"Alarm\": \"\",\n    \"Date\": \"\"\n};\n\nfor (var i = 0; i < input.length; i++) {\n    var item = input[i];\n    if (item.label === \"Alarm\") {\n        transformedData[\"Alarm\"] = item.value;\n    } else if (item.label === \"Time\") {\n        transformedData[\"Date\"] = item.value;\n    }\n}\n\nmsg.payload = transformedData;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750.9999771118164,
+        "y": 708.9999980926514,
+        "wires": [
+            [
+                "e6d51546a3a47e22"
+            ]
+        ]
+    },
+    {
+        "id": "e6d51546a3a47e22",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "getHistory",
+        "func": "// Store the previous data in flow context\nif (!flow.get(\"prevAlarm\")) {\n    flow.set(\"prevAlarm\", []);\n}\n\n// Get the previous data from flow context\nvar prevAlarm = flow.get(\"prevAlarm\");\n\n// Append the new input to the previous data\nprevAlarm.push(msg.payload);\n\n// Set the updated data in msg.payload\n//msg.payload = prevData;\nmsg.payload = prevAlarm.map(function (data) {\n    return {\n        \"Date\": data.Date,\n        \"Alarm\": data.Alarm\n    };\n});\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 960.9999771118164,
+        "y": 708.9999980926514,
+        "wires": [
+            [
+                "92c45338643cb9d5"
+            ]
+        ]
+    },
+    {
+        "id": "92c45338643cb9d5",
+        "type": "ui_template",
+        "z": "61b66726d941df67",
+        "group": "8dbba2a3e1402b38",
+        "name": "ShowAlarmHistory",
+        "order": 2,
+        "width": 10,
+        "height": 14,
+        "format": "<table style=\"margin: 0 auto; border-collapse: collapse;\">\n    <colgroup>\n        <col style=\"width: auto;\">\n        <col style=\"width: auto;\">\n    </colgroup>\n    <thead>\n        <tr>\n            <th style=\"padding: 8px; border: 1px solid black; text-align: center;\">Date</th>\n            <th style=\"padding: 8px; border: 1px solid black; text-align: center;\">Alarm</th>\n\n        </tr>\n    </thead>\n    <tbody>\n        <tr ng-repeat=\"data in msg.payload\">\n            <td style=\"padding: 8px; border: 1px solid black; text-align: center\">{{data.Date}}</td>\n            <td style=\"padding: 8px; border: 1px solid black; text-align: center\">{{data.Alarm}}</td\n\n\n        </tr>\n    </tbody>\n</table>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1150.9999771118164,
+        "y": 708.9999980926514,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "76bd030af13a9cfb",
+        "type": "ui_button",
+        "z": "61b66726d941df67",
+        "name": "",
+        "group": "8dbba2a3e1402b38",
+        "order": 21,
+        "width": 10,
+        "height": 1,
+        "passthru": false,
+        "label": "Delete Alarm History",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 220.9999771118164,
+        "y": 528.9999980926514,
+        "wires": [
+            [
+                "06d553aeea0ad7d5"
+            ]
+        ]
+    },
+    {
+        "id": "06d553aeea0ad7d5",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "deleteAlarmHistory",
+        "func": "flow.set(\"prevAlarm\", null);\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450.9999771118164,
+        "y": 528.9999980926514,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5a6e0dd59cea8b66",
+        "type": "mqtt in",
+        "z": "61b66726d941df67",
+        "name": "",
+        "topic": "estudio3/classroomA/alert/#",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "573d8f5e68d30f26",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 260.9999771118164,
+        "y": 708.9999980926514,
+        "wires": [
+            [
+                "b3b1342d6b76bf76"
+            ]
+        ]
+    },
+    {
+        "id": "b3b1342d6b76bf76",
+        "type": "function",
+        "z": "61b66726d941df67",
+        "name": "processAlarm",
+        "func": "// Function node code\nif (msg.topic === 'estudio3/classroomA/alert/flame') {\n    var msg = msg.payload.toString().split(\"/\");\n    var alarm = \"🔥 Fire Detected\";\n    var currentTime = new Date();\n\n    // Set the time zone to Spanish time (Europe/Madrid)\n    var options = { timeZone: \"Europe/Madrid\", year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };\n    var time = currentTime.toLocaleString('es-ES', options).replace(/\\//g, '-').replace(',', '');\n\n} else if (msg.topic === 'estudio3/classroomA/alert/noise') {\n    var msg = msg.payload.toString().split(\"/\");\n    var alarm = \"🔊 Noice Detected\";\n    var currentTime = new Date();\n\n    // Set the time zone to Spanish time (Europe/Madrid)\n    var options = { timeZone: \"Europe/Madrid\", year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };\n    var time = currentTime.toLocaleString('es-ES', options).replace(/\\//g, '-').replace(',', '');\n\n\n} else if (msg.topic === 'estudio3/classroomA/alert/touch') {\n    var msg = msg.payload.toString().split(\"/\");\n    var alarm = \"👆 Touch Detected\";\n    var currentTime = new Date();\n\n    // Set the time zone to Spanish time (Europe/Madrid)\n    var options = { timeZone: \"Europe/Madrid\", year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };\n    var time = currentTime.toLocaleString('es-ES', options).replace(/\\//g, '-').replace(',', '');\n\n\n} else if (msg.topic === 'estudio3/classroomA/alert/pir') {\n    var msg = msg.payload.toString().split(\"/\");\n    var alarm = \"🚶 Presence Detected\";\n    var currentTime = new Date();\n\n    // Set the time zone to Spanish time (Europe/Madrid)\n    var options = { timeZone: \"Europe/Madrid\", year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };\n    var time = currentTime.toLocaleString('es-ES', options).replace(/\\//g, '-').replace(',', '');\n\n}\nvar alarmObject = {\n    label: \"Alarm\",\n    value: alarm\n};\n\nvar timeObject = {\n    label: \"Time\",\n    value: time\n\n};\n\n\nmsg.payload = [alarmObject, timeObject];\nreturn { payload: msg.payload };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520.9999771118164,
+        "y": 708.9999980926514,
+        "wires": [
+            [
+                "34d6d2d6eb1f64cc"
+            ]
+        ]
+    },
+    {
+        "id": "89281fbcd3f06e38",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "0f9534b2e8d8cedb",
+        "order": 3,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "4879e7ffbf292dfc",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "0f9534b2e8d8cedb",
+        "order": 4,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "84c6e9335cf3ad3b",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "0f9534b2e8d8cedb",
+        "order": 5,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "edbc0122a6cbd0e0",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "0f9534b2e8d8cedb",
+        "order": 6,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "0a006bc4ecabfd39",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "0f9534b2e8d8cedb",
+        "order": 7,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "c6a9c5f357c2427a",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "0f9534b2e8d8cedb",
+        "order": 8,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "583a5c846ddee83f",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "075e0c7fba537f68",
+        "order": 3,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "a07d68e826c3b53e",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "075e0c7fba537f68",
+        "order": 4,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "0c21c5a19d1c8572",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "075e0c7fba537f68",
+        "order": 5,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "e8885b2538bd6e39",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "075e0c7fba537f68",
+        "order": 6,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "f260cf2fc6c8ee16",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 4,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "343fa99e0db7eced",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 5,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "d792df056b78f61c",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 6,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "85d96f63c7ad5f9e",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 7,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "b6496e8c9c8f252e",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 8,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "dc89394ded702eff",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 10,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "bf5873c11248860f",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 11,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "c5a3855736b28dc8",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 12,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "bade6bc3b35ae874",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 13,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "733c1de2bd7f533c",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 14,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "53a852ae9d5d4003",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 16,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "7291ab6d02216341",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 17,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "4ce50971147cce9d",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 18,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "b38e1abc7ba3aeb0",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 19,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "700eda1ccb469117",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "8dbba2a3e1402b38",
+        "order": 22,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "45c40730382224b8",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "b9e2898dda8fba4a",
+        "order": 2,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "b56d7319979eba58",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "b9e2898dda8fba4a",
+        "order": 4,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "44a316e18d2d25a1",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "b9e2898dda8fba4a",
+        "order": 5,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "604cf2fabccf828e",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "b9e2898dda8fba4a",
+        "order": 6,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "be4ba715d885dc58",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "b9e2898dda8fba4a",
+        "order": 7,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "bbd725408e9473e3",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "b9e2898dda8fba4a",
+        "order": 8,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "548ab239bfdfdc03",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "b9e2898dda8fba4a",
+        "order": 9,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "b8ad229b61e13461",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "b9e2898dda8fba4a",
+        "order": 10,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "3c2ccd3e1b3903b6",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "b9e2898dda8fba4a",
+        "order": 11,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "8b885d57a907c730",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "b9e2898dda8fba4a",
+        "order": 12,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "7d49fc8cb3499914",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "d6c6f52d086a9497",
+        "order": 3,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "704f237dba7d9b79",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "d6c6f52d086a9497",
+        "order": 5,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "fe17be63baeb12db",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "d6c6f52d086a9497",
+        "order": 6,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "776e8ea07c2e91f8",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "d6c6f52d086a9497",
+        "order": 7,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "2fa2a8d54c4bca77",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "d6c6f52d086a9497",
+        "order": 8,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "0bee83ec801fc780",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "d6c6f52d086a9497",
+        "order": 9,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "60c236e54b34788c",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "d6c6f52d086a9497",
+        "order": 10,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "60ce497c36f2c411",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "d6c6f52d086a9497",
+        "order": 11,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "5e70c08d6e85cbfd",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "d6c6f52d086a9497",
+        "order": 12,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "b34e285e16ebd334",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "60a8a224fcc69219",
+        "order": 3,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "f0b1923a79a94676",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "60a8a224fcc69219",
+        "order": 4,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "54e5e2d630733f97",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "60a8a224fcc69219",
+        "order": 5,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "c1ba79cc1095ffc4",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "60a8a224fcc69219",
+        "order": 6,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "6a99d3933cdf7d66",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "60a8a224fcc69219",
+        "order": 7,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "3e30c7aee8c7afab",
+        "type": "ui_spacer",
+        "z": "61b66726d941df67",
+        "name": "spacer",
+        "group": "60a8a224fcc69219",
+        "order": 8,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "8dbba2a3e1402b38",
+        "type": "ui_group",
+        "name": "Temperature",
+        "tab": "3504629f006e8066",
+        "order": 3,
+        "disp": false,
+        "width": 27,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "d6c6f52d086a9497",
+        "type": "ui_group",
+        "name": "Temperature",
+        "tab": "2531756e4ef69933",
+        "order": 2,
+        "disp": false,
+        "width": "12",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "b9e2898dda8fba4a",
+        "type": "ui_group",
+        "name": "Subject",
+        "tab": "2531756e4ef69933",
+        "order": 1,
+        "disp": false,
+        "width": 8,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "573d8f5e68d30f26",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.0.9",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "60a8a224fcc69219",
+        "type": "ui_group",
+        "name": "Notification",
+        "tab": "2531756e4ef69933",
+        "order": 3,
+        "disp": false,
+        "width": 7,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "3504629f006e8066",
+        "type": "ui_tab",
+        "name": "Debug",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "2531756e4ef69933",
+        "type": "ui_tab",
+        "name": "Display",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
